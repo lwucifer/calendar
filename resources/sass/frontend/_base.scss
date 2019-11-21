@@ -1,0 +1,317 @@
+main {
+  min-height: calc(100vh - 96px)
+}
+
+select {
+  background-color: #fff;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.form-group label.abs {
+  position: absolute;
+  bottom: 100%;
+  height: auto;
+}
+
+.dropdown-item {
+  color: rgba(0, 0, 0, .5)
+}
+
+.dropdown-item:hover {
+  color: rgba(0, 0, 0, .7)
+}
+
+dropdown-item.active, .dropdown-item:active {
+  background-color: transparent;
+  color: rgba(0, 0, 0, .7)
+}
+
+.form-group label {
+  height: 100%;
+  display: flex;
+  align-items: normal;
+  padding-top: 7px;
+}
+
+.form-group {
+  align-items: normal;
+}
+
+.form-group {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: normal;
+}
+
+.form-group.required > [class*="col-"] > label {
+  position: relative;
+}
+
+.form-group.required > [class*="col-"] > label:before {
+  content: "＊";
+  display: inline-block;
+  font-size: 0.6rem;
+  color: red;
+  position: absolute;
+  top: 7px;
+  right: calc(100% + 3px);
+}
+
+.form-group label + input[type=checkbox] {
+  display: inline-block;
+  width: auto;
+  vertical-align: middle;
+}
+
+@media (min-width: 992px) {
+  .border-right-lg {
+    border-right: 1px solid #dee2e6;
+  }
+}
+
+@media (min-width: 576px) {
+  .form-group label {
+    justify-content: left;
+  }
+  .form-group .form-control {
+    width: 100%;
+  }
+  .form-group label + .form-control {
+    width: auto;
+  }
+}
+
+@media (max-width: 575px) {
+  .form-group label {
+    height: auto;
+  }
+}
+
+.text-red {
+  color: red
+}
+
+.mt-2r {
+  margin-top: 2rem
+}
+
+.mb-2r {
+  margin-bottom: 2rem
+}
+
+.min-h-100 {
+  min-height: 100%
+}
+
+.max-w-200 {
+  max-width: 200px
+}
+
+.max-w-150 {
+  max-width: 150px
+}
+
+.max-w-120 {
+  max-width: 120px
+}
+
+.max-w-100 {
+  max-width: 100px
+}
+
+.max-w-80 {
+  max-width: 80px
+}
+
+.max-w-50 {
+  max-width: 50px
+}
+
+.min-h-200 {
+  min-height: 200px
+}
+
+.min-w-150 {
+  min-width: 150px
+}
+
+.min-w-100 {
+  min-width: 100px
+}
+
+.min-w-200 {
+  min-width: 200px
+}
+
+.width-35 {
+  width: 30px;
+  float: left;
+}
+
+.align-normal {
+  align-items: normal !important;
+}
+
+.align-center {
+  align-items: center !important;
+}
+
+.form-group .subtop {
+  height: auto;
+  padding-top: 0;
+}
+
+.subtop {
+  border: 1px solid rgb(169, 169, 169);
+  border-bottom: 0;
+  margin-bottom: 0;
+  width: 100%;
+  background: #fff;
+}
+
+.min-w-100 {
+  min-width: 100px
+}
+
+.form-group:not(.form-group) > .form-control + .form-control {
+  margin-top: 0.5rem
+}
+
+.width-35 + input {
+  width: calc(100% - 30px)
+}
+
+.page-title {
+  margin-bottom: 1rem
+}
+
+.nav-link {
+  display: inline-block
+}
+
+.boder-1 {
+  border: 1px solid #333
+}
+
+table.boder-1 td {
+  border: 0
+}
+
+.bg-blue {
+  background-color: #b3dbd8
+}
+
+.table td, .table th {
+  padding: 0.5rem
+}
+
+table thead td {
+  font-weight: bold
+}
+
+ul.big-dot > li:before {
+  content: "";
+  background-color: #333;
+  display: inline-block;
+  border-radius: 2px;
+  height: 12px;
+  width: 12px;
+  margin-right: 3px;
+  vertical-align: baseline;
+}
+
+table td > span {
+  display: block
+}
+
+.search-form ul {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.search-form .filter-item > label {
+  margin-bottom: 0
+}
+
+.search-form .filter-item > * {
+  display: block;
+}
+
+.search-form .filter-item {
+  display: inline-block;
+  margin: 0.5rem;
+}
+
+/* Custom Toggle/Switch Button */
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(16px);
+  -ms-transform: translateX(16px);
+  transform: translateX(16px);
+}
+
+.top-content table th {
+  background-color: #aaa;
+}
+
+.navbar-brand.logo {
+  line-height: 1;
+  >span{
+    display: inline-block;
+    vertical-align: middle;
+  }
+}

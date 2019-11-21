@@ -1,0 +1,215 @@
+<div class="account-list">
+    <h3 class="page-title">{{ 'plan.plan_list.title' | translate }}</h3>
+    <form class="search-form" (ngSubmit)="search(fm)" #fm="ngForm">
+        <ul class="mb-0">
+            <li class="filter-item min-w-200">
+                <label>{{ 'plan.plan_list.search.store' | translate }}</label>
+                <select class="form-control min-w-200" ngModel name="store_id">
+                    <option value=""></option>
+                    <option value="{{ i.id }}" *ngFor="let i of stores">{{ i.name }}</option>
+                </select>
+            </li>
+            <li class="filter-item min-w-200">
+                <label>{{ 'plan.plan_list.search.f-id' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="fid" value=""/>
+            </li>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <li class="filter-item min-w-200">
+                <label>{{ 'plan.plan_list.search.account' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="username" value=""/>
+            </li>
+            <li class="filter-item min-w-200">
+                <label>{{ 'plan.plan_list.search.mail' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="email" value=""/>
+            </li>
+            <li class="filter-item min-w-200">
+                <label>{{ 'plan.plan_list.search.phone' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="phone" value=""/>
+            </li>
+            <br>
+            <li class="filter-item mb-0">
+                <ul class="mb-0">
+                    <li class="filter-item">
+                        <label>{{ 'plan.plan_list.search.campaign' | translate }}</label>
+                        <select class="form-control min-w-200" ngModel name="campaign_id">
+                            <option value=""></option>
+                            <option value="{{ i.id }}" *ngFor="let i of campaigns">{{ i.name }}</option>
+                        </select>
+                    </li>
+                    <li class="filter-item min-w-200">
+                        <label>{{ 'plan.plan_list.search.time' | translate }}</label>
+                        <input [(ngModel)]="dateTimeRange"
+                               name="start_time"
+                               class="form-control"
+                               [selectMode]="'rangeFrom'"
+                               [owlDateTimeTrigger]="start_time"
+                               [owlDateTime]="start_time">
+                        <owl-date-time #start_time></owl-date-time>
+                    </li>
+                    <span>〜</span>
+                    <li class="filter-item min-w-200">
+                        <input [(ngModel)]="dateTimeRange"
+                               name="end_time"
+                               class="form-control"
+                               [selectMode]="'rangeTo'"
+                               [owlDateTimeTrigger]="end_time" [owlDateTime]="end_time">
+                        <owl-date-time #end_time></owl-date-time>
+                    </li>
+                </ul>
+            </li>
+            <li class="filter-item">
+                <label>{{ 'plan.plan_list.search.status' | translate }}</label>
+                <select class="form-control min-w-200" ngModel name="status">
+                    <option value=""></option>
+                    <option value="{{ i.id }}" *ngFor="let i of status_list">{{ i.name }}</option>
+                </select>
+            </li>
+            <li class="filter-item">
+                <button type="submit" class="btn btn-primary ml-0 mt-3">
+                    {{ 'common.search' | translate }}
+                </button>
+            </li>
+        </ul>
+    </form>
+    <div class="row m-0 mt-4 mb-3">
+        <a role="button" href="/api/plan/export/all" target="_blank" class="btn btn-dark mr-2">CSV出力</a>
+        <a role="button" href="javascript:void(0);" (click)="getDataCustomer()" class="btn btn-dark mr-2">手動更新</a>
+        <a role="button" href="javascript:void(0)" (click)="downloadPdf()" class="btn btn-dark mr-2">PDF出力</a>
+
+    </div>
+    <div class="row m-0">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" class="select-all-plan" (change)="onSelectAllCustomer($event.srcElement)" />
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'plan.plan_list.list.id' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'fid'" (click)="setOrder('fid')">
+                    {{ 'plan.plan_list.list.f-id' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'user.name'" (click)="setOrder('user.name')">
+                    {{ 'plan.plan_list.list.name' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'user.phone'" (click)="setOrder('user.phone')">
+                    {{ 'plan.plan_list.list.phone' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'store.name'" (click)="setOrder('store.name')">
+                    {{ 'plan.plan_list.list.store' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('start_time')">
+                    {{ 'plan.plan_list.list.time' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('campaign.name')">
+                    {{ 'plan.plan_list.list.campaign' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'plan.plan_list.list.option' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('i.status')">
+                    {{ 'plan.plan_list.list.status' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'plan.plan_list.list.edit' | translate }}</th>
+                <th [class.active]="order === 'created_at.date'" (click)="setOrder('created_at.date')">
+                    {{ 'plan.plan_list.list.create_day' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'updated_at.date'" (click)="setOrder('updated_at.date')">
+                    {{ 'plan.plan_list.list.last_update' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'last_update_by'" (click)="setOrder('last_update_by')">
+                    {{ 'plan.plan_list.list.update_by' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'plan.plan_list.list.delete' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let i of (results | orderBy: order:reverse:'case-insensitive'); index as e">
+                <td><input type="checkbox" class="select-plan" (change)="onSelectCustomer(i.id, $event.srcElement)" /></td>
+                <td>{{ i.id }}</td>
+                <td>{{ i.fid }}</td>
+                <td>{{ i.user_name }}</td>
+                <td>{{ i.user_phone }}</td>
+                <td>{{ i.store.name }}</td>
+                <td>{{ i.date}}
+                    <br>
+                    {{ i.start_time}} ~ {{ i.end_time}}
+                </td>
+                <td>{{ i.campaign.name }}</td>
+                <td class="max-w-200">{{ showoption(i.option)}}</td>
+                <td *ngIf=" getSelectedStatus(i.status).id != 4">
+                    <select class="form-control p-0" ngModel="{{ getSelectedStatus(i.status).id }}" name="status"
+                            #item (change)="changeStatus(i.id, item.value)">
+                        <option value="{{ j.id }}" *ngFor="let j of status_list_enable">{{ j.name }}</option>
+                    </select>
+                </td>
+                <td *ngIf="getSelectedStatus(i.status).id == 4">予約完了</td>
+                <td>
+                    <a routerLink="/plan/edit/{{ i.id }}"
+                       class="mr-2">{{ 'plan.plan_list.list.edit' | translate }}</a>
+                </td>
+                <td>{{ i.created_at?.date | date : dateformat }}</td>
+                <td>{{ i.updated_at?.date | date : dateformat}}</td>
+                <td>{{ i.last_update_by[0]?.first_name + ' ' + i.last_update_by[0]?.last_name}}</td>
+                <td>
+                    <button (click)="delete(i.id)" class="btn btn-danger">
+                        {{ 'plan.plan_list.list.delete' | translate }}
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="modal fade" id="messenger_response" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ 'common.submit_title' | translate}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" [innerHTML]="messenger_response">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{'common.ok' | translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <app-pagination
+                (goPage)="goToPage($event)"
+                (goNext)="onNext()"
+                (goPrev)="onPrev()"
+                [pagesToShow]="5"
+                [page]="page"
+                [perPage]="pages.per_page"
+                [count]="pages.total">
+        </app-pagination>
+        <app-import [attrImport]="attrImport" [object]="object" class="w-100"></app-import>
+    </div>
+</div>

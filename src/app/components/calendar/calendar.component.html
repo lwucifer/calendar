@@ -1,0 +1,112 @@
+<h3 class="page-title">{{ stroreName }}</h3>
+<div class="row">
+    <div class="col-12 col-md-4">
+        <ng-container *ngIf="options">
+            <ng-fullcalendar
+                #fullcalendar
+                (dateClick)="dateClick($event)"
+                (clickButton)="setSpecial()"
+                [eventsModel]="eventsModel"
+                [options]="options"
+            ></ng-fullcalendar>
+        </ng-container>
+        <a routerLink="/store" class="btn btn-secondary mt-3">{{ 'common.back' | translate }}</a>
+    </div>
+    <div class="col-12 col-md-8">
+        <div>
+            <h3 class="ml-auto mr-auto mb-0 d-inline-block" id="idate"></h3>
+            <div class="w-auto d-inline-block float-right" *ngIf="show">
+                <span>ステータス</span>
+                <select class="form-control w-auto d-inline-block" [(ngModel)]="status" name="status">
+                    <option value=""></option>
+                    <option value="{{ i.id }}" *ngFor="let i of status_list">{{ i.name }}</option>
+                </select>
+            </div>
+            <span style="clear: both"></span>
+        </div>
+        <div class="position-relative mt-4 border-top common_wrapper" *ngIf="show">
+            <table class="table m-0 range-time border">
+                <tr>
+                    <td class="t-title">時間</td>
+                    <td></td>
+                </tr>
+                <tr *ngFor="let item of rangeTime">
+                    <td style="width: 100px" class="h5">{{ item }}</td>
+                    <td></td>
+                </tr>
+            </table>
+            <div class="list_plan_wrapper">
+                <div class="m-0 row-custom list_plan">
+                    <div class="col-custom" *ngFor="let plan of plans; let i = index">
+                        <div class="title-col">{{ plan[0][0].lane_name }}</div>
+                        <div *ngFor="let option of plan[0]; let j = index" class="item-top" [attr.data-item]="j" [attr.data-top]="option.top" [attr.data-height]="option.height" [attr.data-left]="1">
+                            <div [ngClass]="option.status == status || status == 0 ? 'show status_'+ option.status : 'hidden status_'+ option.status"
+                                 class="item"
+                                 [attr.data-top]="option.top" [attr.data-height]="option.height" [attr.data-left]="1">
+                            <ul>
+                                <li><b>{{ option.campaign_name }}</b></li>
+                                <li><b>{{ option.user_name }}</b></li>
+                                <li *ngIf="option.content[0]">
+                                    <div><b>{{option.content[0].name}}</b></div>
+                                    <ul class="ml-3">
+                                        <li *ngFor="let sel of option.content[0].select">
+                                            <div *ngIf="sel.status === 1">
+                                                <span>{{sel.name}} :</span>
+                                                <span *ngIf="dataDate.date_type === 2">{{sel.holiday_price ? sel.holiday_price : 0}}</span>
+                                                <span *ngIf="dataDate.date_type === 1">{{sel.weekday_price ? sel.weekday_price : 0}}</span>
+                                                <span>円</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <a href="#" class="show_more" data-toggle="modal" [attr.data-target]="'#modal'+i+'_'+j" data-target="#myModal"></a>
+                                <div class="modal" [attr.id]="'modal'+i+'_'+j">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div [ngClass]="'modal-body custom status_'+ option.status">
+                                                <button aria-label="Close" class="close" type="button" data-dismiss="modal">
+                                                    <span>×</span>
+                                                </button>
+                                                <ul class="pt-31">
+                                                    <li><b>キャンペーン名: </b>{{ option.campaign_name }}</li>
+                                                    <li><b>時間: </b>{{ option.start_time }}~{{ option.end_time }}</li>
+                                                    <li><b>ユーザー情報: </b>
+                                                        <ul>
+                                                            <li><b>名前: </b>{{ option.user_name }}</li>
+                                                            <li><b>電話番号: </b>{{ option.user_phone }}</li>
+                                                            <li><b>メール: </b>{{ option.user_email }}</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><b>オプション:</b>
+                                                        <ul>
+                                                            <li *ngFor="let val of option.content">
+                                                                <div><b>{{val.name}}</b></div>
+                                                                <ul>
+                                                                    <li *ngFor="let sel of val.select">
+                                                                        <div *ngIf="sel.status === 1">
+                                                                            <span>{{sel.name}} :</span>
+                                                                            <span *ngIf="dataDate.date_type === 2">{{sel.holiday_price ? sel.holiday_price : 0}}</span>
+                                                                            <span *ngIf="dataDate.date_type === 1">{{sel.weekday_price ? sel.weekday_price : 0}}</span>
+                                                                            <span>円</span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+        </div>
+    </div>
+</div>

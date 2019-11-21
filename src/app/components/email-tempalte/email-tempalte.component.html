@@ -1,0 +1,99 @@
+<div class="email-template" *ngIf="dataMail">
+    <h3 class="page-title">{{ 'email.title' | translate }}</h3>
+    <div>
+        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addMailModal">
+            {{ 'email.title_email' | translate }}
+        </button>
+        <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form class="add-form" [formGroup]="formdataMail" (ngSubmit)="addMail(formdataMail ,addMailForm)"
+                      #addMailForm="ngForm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">{{ 'email.title_email' | translate }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row form-group">
+                                <div class="col-sm-4">
+                                    <label>{{ 'email.template' | translate}}</label>
+                                </div>
+                                <div class="col-sm-8 ">
+                                    <input class="form-control" type="text" formControlName="template" value=""/>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-sm-4">
+                                    <label>{{ 'email.subject' | translate}}</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" formControlName="title" value=""/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                    data-dismiss="modal">{{ 'common.back' | translate }}</button>
+                            <button type="submit" class="btn btn-primary ml-0 float-right btn-add">
+                                {{ 'common.save' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-edit">
+        <br>
+        <form class="content-mail" [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value, formMail)"
+              #formMail="ngForm">
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label>{{ 'email.select_mail' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <select formControlName="mail_id" class="w-75 form-control"
+                            (change)="selectMail($event.target.value)" id="select_template">
+                        <option *ngFor="let mail of list_mail" [value]="mail.id"
+                                [selected]="mail.id == selected">{{ mail.title }}</option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label>{{ 'email.template' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <input class="form-control w-75" readonly formControlName="template"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label>{{ 'email.subject' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <input class="form-control w-75" formControlName="subject"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label>{{ 'email.content' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                <textarea class="form-control w-75" rows="10" formControlName="content">
+                </textarea>
+                </div>
+            </div>
+            <button [disabled]="!formdata.valid" type="submit"
+                    class="btn btn-primary mt-3 ml-0 mr-3">{{ 'common.save' | translate }}</button>
+            <button (click)="deleteTemplate()" type="button"
+                    class="btn btn-dark mt-3 ml-0 mr-3">{{ 'common.delete' | translate }}</button>
+        </form>
+
+    </div>
+</div>

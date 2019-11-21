@@ -1,0 +1,168 @@
+<div class="account-list">
+    <h3 class="page-title">{{ 'campaign.campaign_list.title' | translate }}</h3>
+    <form class="search-form" (ngSubmit)="search(fm)" #fm="ngForm">
+        <div class="row m-0">
+            <div class="col-sm-2 p-0 mr-2">
+                <label class="w-100">{{ 'campaign.campaign_list.search.name' | translate }}</label>
+                <select class="form-control" ngModel name="campaign_id">
+                    <option value=""></option>
+                    <option value="{{ i.id }}" *ngFor="let i of campaigns">{{ i.name }}</option>
+                </select>
+            </div>
+            <div class="col-sm-2 p-0 mr-2">
+                <label class="w-100">{{ 'campaign.common.form.code' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="code" value=""/>
+            </div>
+            <div class="col-sm-2">
+                <label class="w-100">{{ 'campaign.campaign_list.search.store' | translate }}</label>
+                <select class="form-control" ngModel name="store_id">
+                    <option value=""></option>
+                    <option value="{{ i.id }}" *ngFor="let i of stores">{{ i.name }}</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <label class="w-100">{{ 'campaign.campaign_list.search.photo' | translate }}</label>
+                <select class="form-control" ngModel name="photo_id">
+                    <option value=""></option>
+                    <option value="{{ i.id }}" *ngFor="let i of photo">{{ i.name }}</option>
+                </select>
+            </div>
+            <div class="p-0">
+                <button type="submit" class="btn btn-primary ml-0 float-right btn-search">
+                    {{ 'common.search' | translate }}
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="m-0 mt-4 mb-3">
+        <a role="button" href="/api/campaign/export/all" target="_blank" class="btn btn-dark mr-2">
+            {{ 'common.csv_export' | translate }}</a>
+        <a href="javascript:void(0)" class="btn btn-info" data-toggle="modal" data-target="#importModal">
+            {{ 'common.csv_import' | translate }}</a>
+        <a routerLink="/campaign/add" class="btn btn-primary ml-0 float-right">
+            {{ 'common.new' | translate }}</a>
+    </div>
+    <div class="row m-0">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'campaign.campaign_list.list.id' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'name'" (click)="setOrder('name')">
+                    {{ 'campaign.campaign_list.list.name' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'web_name'" (click)="setOrder('web_name')">
+                    {{ 'campaign.campaign_list.list.web' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th style="width: 400px" [class.active]="order === 'store.name'" (click)="setOrder('store.name')">
+                    {{ 'campaign.campaign_list.list.store' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'photo.name'" (click)="setOrder('photo.name')">
+                    {{ 'campaign.campaign_list.list.photo_type' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <td>{{ 'campaign.campaign_list.list.use' | translate }}</td>
+                <td class="min-w-100">{{ 'campaign.campaign_list.list.edit' | translate }}</td>
+                <th style="width: 100px" [class.active]="order === 'code'" (click)="setOrder('code')">
+                    {{ 'campaign.campaign_list.list.urls' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'updated_at.date'" (click)="setOrder('updated_at.date')">
+                    {{ 'campaign.campaign_list.list.last_update' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'last_update_by'" (click)="setOrder('last_update_by')">
+                    {{ 'campaign.campaign_list.list.update_by' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'campaign.campaign_list.list.delete' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let i of (results | orderBy: order:reverse); index as e">
+                <td>{{ i.id }}</td>
+                <td>{{ i.name }}</td>
+                <td>{{ i.web_name }}</td>
+                <td>{{ get_list_store(i.id) }}</td>
+                <td>{{ i.photo?.name }}</td>
+                <td>
+                    <a href="javascript:void(0);" *ngIf="check_condition(i) == true">
+                        <label class="switch align-middle mb-0">
+                            <input type="checkbox" [checked]="i.is_enable" (change)="enable(i.id, i.is_enable)"/>
+                            <span class="slider round"></span>
+                        </label>
+                    </a>
+                </td>
+                <td>
+                    <a routerLink="/campaign/edit/{{ i.id }}" class="mr-2">
+                        {{ 'campaign.campaign_list.list.edit' | translate }}</a>
+                    <a href="javascript:void(0);" class="float-right"  *ngIf="check_condition(i) == true" (click)="copy(i.id)">
+                        {{ 'campaign.campaign_list.list.copy' | translate }}</a>
+                </td>
+                <td>
+                    <a style="width: 100px; overflow: hidden; display: inline-block" href="javascript:void(0)" (click)="getStores(i.id, i.name)" data-toggle="modal" data-target="#linkModal">
+                        {{ i.code }}</a>
+                </td>
+                <td>{{ i.updated_at?.date | date : dateformat}}</td>
+                <td>{{ i.last_update_by[0]?.first_name + ' '+ i.last_update_by[0]?.last_name}}</td>
+                <td>
+                    <button [disabled]="i.is_enable"
+                            (click)="delete(i.id)" *ngIf="check_condition(i) == true" class="btn btn-danger">
+                        {{ 'campaign.campaign_list.list.delete' | translate }}
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="modal fade" tabindex="-1" role="dialog" id="linkModal">
+            <div class="modal-dialog">
+                <form class="form-horizontal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title">
+                                <h3>{{ 'campaign.campaign_list.list.title_urls' | translate }}</h3>
+                                <h5 class="mb-0">{{ campaignModal }}</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div *ngFor="let i of campaignStores">
+                                <a target="_blank" href="./calendar/{{ i.campaign_code }}/{{ i.store_code }}">
+                                    {{ i.store_name }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <app-pagination
+                (goPage)="goToPage($event)"
+                (goNext)="onNext()"
+                (goPrev)="onPrev()"
+                [pagesToShow]="5"
+                [page]="page"
+                [perPage]="pages?.per_page"
+                [count]="pages?.total">
+        </app-pagination>
+        <app-import [attrImport]="attrImport" [object]="object" class="w-100"></app-import>
+
+    </div>
+</div>

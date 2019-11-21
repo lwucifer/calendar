@@ -1,0 +1,302 @@
+<div class="account-list" *ngIf="loaded == true">
+    <h3 class="page-title">{{ (id ? 'plan.edit.title' : 'plan.add.title') | translate }}</h3>
+
+    <form [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)">
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.store' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <select class="form-control max-w-200 disabled" formControlName="store_id">
+                    <option [value]="stores?.id">{{ stores?.name }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.campaign' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <select class="form-control max-w-200 disabled" formControlName="campaign_id" id="select_campaign"
+                        (change)="reset()">
+                    <option [value]="campaigns?.id">{{ campaigns?.name }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.plan_list.search.account'| translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control max-w-200"  type="text" formControlName="user_name"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'plan.plan_list.search.mail' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control max-w-200" type="text" formControlName="user_email">
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.plan_list.search.phone' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control max-w-200" type="text" formControlName="user_phone">
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.plan_date' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input id="date" class="form-control max-w-200 disabled" (ngModelChange)="changeDate()"
+                       formControlName="date"
+                       [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1">
+                <owl-date-time [pickerType]="'calendar'" #dt1></owl-date-time>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <div class="alert alert-danger mt-3" *ngIf="message?.date">{{message?.date}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.plan_time' | translate }}</label>
+            </div>
+            <div class="col-sm-10" *ngIf="disable_choosen_status === true">
+                <select name="" class="form-control max-w-200 disabled" id="schedule_time" formControlName="schedule_time">
+                    <option *ngFor="let j of schedules" value="{{ j.id }}">{{ convertTimeFormat(j?.time_start) }} ~ {{convertTimeFormat(j?.time_end)}}</option>
+                </select>
+            </div>
+            <div class="col-sm-10" *ngIf="disable_choosen_status === false && disable_choose_time === false">
+                <select name="" class="form-control max-w-200" id="schedule_time" formControlName="schedule_time">
+                    <option *ngFor="let j of schedules" value="{{ j.id }}">{{ convertTimeFormat(j?.time_start) }} ~ {{convertTimeFormat(j?.time_end)}}</option>
+                </select>
+            </div>
+            <div class="col-sm-10" *ngIf="disable_choosen_status === false && disable_choose_time === true">
+                <select name="" class="form-control max-w-200 disabled" id="schedule_time" formControlName="schedule_time">
+                    <option *ngFor="let j of schedules" value="{{ j.id }}">{{ convertTimeFormat(j?.time_start) }} ~ {{convertTimeFormat(j?.time_end)}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.plan_status' | translate }}</label>
+            </div>
+            <div *ngIf="disable_choosen_status === true" class="col-sm-10  form-group">
+                <select class="form-control max-w-200 disabled" name="status" formControlName="status">
+                    <option value="{{ j.id }}" *ngFor="let j of status_list">{{ j.name }}</option>
+                </select>
+            </div>
+            <div *ngIf="disable_choosen_status === false" class="col-sm-10  form-group">
+                <select class="form-control max-w-200" name="status" formControlName="status">
+                    <option value="{{ j.id }}" *ngFor="let j of status_list_enable">{{ j.name }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.option' | translate }}</label>
+            </div>
+            <div class="col-sm-10 p-0">
+                <div class="col-sm-12" *ngFor="let option of all_option; index as i">
+                    <h5>{{ option['name'] }}</h5>
+                    <div class="form-group" *ngFor="let select of option['select']; index as j">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>
+                                <span style="color: red" *ngIf="select['require']">*</span>
+                                {{ select['name'] }}
+                            </label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <div class="div-sub-price" *ngIf="date_type == 2">
+                                <input class="form-control max-w-200 disabled" type="text"
+                                       value="{{ select['holiday_price'] ? select['holiday_price'] : 0 }}"><span>円</span>
+                            </div>
+                            <div class="div-sub-price" *ngIf="date_type != 2">
+                                <input class="form-control max-w-200 disabled" type="text"
+                                       value="{{ select['weekday_price'] ? select['weekday_price'] : 0 }}"><span>円</span>
+                            </div>
+                            <input *ngIf="option['type'] == 1" name="option_{{ i }}_{{ j }}"
+                                   [checked]="select['status']" type="checkbox" class="form-control checkbox"/>
+                            <input *ngIf="option['type'] == 0" name="option_{{ i }}" [checked]="select['status']"
+                                   type="radio" class="form-control checkbox" value="{{ j }}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-danger ml-3" *ngIf="message?.option">{{message?.option}}</div>
+                <div class="alert alert-danger ml-3" *ngIf="showMessageRequire">{{'common.show_message_require' | translate}}</div>
+            </div>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.other' | translate }}</label>
+            </div>
+            <div class="col-sm-10 p-0">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.fid' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.fid }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.father_name' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.father_firstname }}">
+                            <span class="pl-3 pr-3">{{ 'plan.common.customer.last_name' | translate }}</span>
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.father_lastname }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.father_name_kana' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.father_firstname_kana }}">
+                            <span class="pl-3 pr-3">{{ 'plan.common.customer.last_name' | translate }}</span>
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.father_lastname_kana }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.mother_name' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.mother_firstname }}">
+                            <span class="pl-3 pr-3">{{ 'plan.common.customer.last_name' | translate }}</span>
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.mother_lastname }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.mother_name_kana' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.mother_firstname_kana }}">
+                            <span class="pl-3 pr-3">{{ 'plan.common.customer.last_name' | translate }}</span>
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.mother_lastname_kana }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.new_tel' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.new_tel }}">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.new_ktai' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.new_ktai }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.old_tel' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.old_tel }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.old_ktai' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.old_ktai }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.zipcode' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.zipcode }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.address1' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.address1 }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.address2' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.address2 }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.address3' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center">
+                            <input class="form-control max-w-200 disabled" type="text" value="{{ custom_info?.address3 }}">
+                        </div>
+                    </div>
+                    <div class="form-group" >
+                        <div class="col-sm-2 p-0 mb-0">
+                            <label>{{ 'plan.common.customer.children' | translate }}</label>
+                        </div>
+                        <div class="form-group mb-0 col-sm-10 align-center" >
+                            <div class="form-group" *ngFor="let children of custom_info?.children">
+                                <div class="form-group col-sm-12" >
+                                    <span class="col-sm-2 p-0 mb-0" >{{ 'plan.common.customer.children_name' | translate }}</span>
+                                    <input class="form-control max-w-200 disabled" type="text" value="{{ children?.firstname }}">
+                                    <span class="col-sm-2 pl-3 pr-3">{{ 'plan.common.customer.children_name_kana' | translate }}</span>
+                                    <input class="form-control max-w-200 disabled" type="text" value="{{ children?.firstname_kana }}">
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div class="col-sm-2 p-0 mb-0">
+                                        <label>{{ 'plan.common.customer.gender' | translate }}</label>
+                                    </div>
+                                    <input class="form-control max-w-200 disabled" type="text" value="{{ children?.gender }}">
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div class="col-sm-2 p-0 mb-0">
+                                        <label>{{ 'plan.common.customer.birthday' | translate }}</label>
+                                    </div>
+                                    <input class="form-control max-w-200 disabled" type="text" value="{{ children?.birthday }}">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row mt-5">
+            <div class="col-sm-2">
+                <label>{{ 'plan.common.form.comment' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" formControlName="comment"></textarea>
+            </div>
+        </div>
+        <a routerLink="/plan" class="btn btn-dark mt-3 ml-0 mr-3">
+            {{ 'plan.common.form.back' | translate }}</a>
+        <button [disabled]="!validate()" type="submit" class="btn btn-primary mt-3 ml-0 mr-3">
+            {{ 'plan.common.form.save' | translate }}</button>
+    </form>
+</div>

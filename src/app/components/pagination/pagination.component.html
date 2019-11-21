@@ -1,0 +1,7 @@
+<!-- pagination.component.html -->
+<div class="pagination" *ngIf="show()">
+  <button (click)="onPrev()" *ngIf="page > 1" class="page-link"><<</button>
+  <button *ngFor="let pageNum of getPages()" (click)="onPage(pageNum)" [disabled]="page === pageNum" class="page-link">{{ pageNum }}</button>
+  <button (click)="onNext()" *ngIf="lastPage()" class="page-link">>></button>
+  <span class="ml-2 form-control border-0">{{ getMin() }} -> {{ getMax() }} of {{ count }}</span>
+</div>

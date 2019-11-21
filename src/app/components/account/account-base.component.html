@@ -1,0 +1,162 @@
+<div class="account-list" *ngIf="loaded == true">
+    <h3 class="page-title">{{ (profile ? 'account.profile.title' : (id ? 'account.edit.title' : 'account.add.title')) | translate }}</h3>
+      
+    <form [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)" #formDirective="ngForm">
+        <div class="form-group row required" *ngIf="hasValidateRole()">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.role' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <select class="form-control max-w-200 select-disabled" formControlName="role_id">
+                    <option value="{{ i.id }}" *ngFor="let i of roles">{{ 'roles.' + i.name | translate }}</option>
+                </select>
+            </div>
+        </div>
+            <div class="form-group row required" *ngIf="hasValidateStore()">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.store' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <select class="form-control max-w-200" formControlName="store_id">
+                    <option value="{{ i.id }}" *ngFor="let i of stores">{{ i.name }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.name' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <div class="d-inline-block">
+                    <span>{{ 'account.common.form.first_name' | translate }}</span>
+                    <input class="form-control max-w-200" type="text" name="first_name" formControlName="first_name"/>
+                </div>
+                <div class="d-inline-block">
+                    <span>{{ 'account.common.form.last_name' | translate }}</span>
+                    <input class="form-control max-w-200" type="text" name="last_name" formControlName="last_name"/>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <div class="alert alert-danger mt-3" *ngIf="message?.first_name || message?.last_name">
+                    {{message?.first_name}} {{message?.last_name}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.kana_name' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <div class="d-inline-block">
+                    <span>{{ 'account.common.form.first_name' | translate }}</span>
+                    <input class="form-control max-w-200" type="text" name="kana_first_name"
+                           formControlName="kana_first_name"/>
+                </div>
+                <div class="d-inline-block">
+                    <span>{{ 'account.common.form.last_name' | translate }}</span>
+                    <input class="form-control max-w-200" type="text" name="kana_last_name"
+                           formControlName="kana_last_name"/>
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <div class="alert alert-danger mt-3" *ngIf="message?.kana_first_name || message?.kana_last_name">
+                    {{message?.kana_first_name}} {{message?.kana_last_name}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.username' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" name="username" formControlName="username"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.username">{{message?.username}}</div>
+            </div>
+        </div>
+        <div class="form-group row required" *ngIf="!id">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.password' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="password" name="password" formControlName="password"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.password">{{ 'common.invalid_password' | translate }}</div>
+            </div>
+        </div>
+        <div class="form-group row required" *ngIf="!id">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.co-password' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="password" name="co_password" formControlName="co_password"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.co_password">{{message?.co_password}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.mail' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" name="email" formControlName="email"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.email">{{message?.email}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.phone' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control form-inline" type="text" name="phone" formControlName="phone"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.phone">{{message?.phone}}</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.zip_code' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" name="zip_code" formControlName="zip_code"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.zip_code">{{message?.zip_code}}</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.address' | translate }}1</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" name="address1" formControlName="address1"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.address1">{{message?.address1}}</div>
+            </div>
+        </div>
+        <div class="form-group row mb-1">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.address' | translate }}2</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" name="address2" formControlName="address2"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.address2">{{message?.address2}}</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'account.common.form.comment' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" name="comment" formControlName="comment"></textarea>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.comment">{{message?.comment}}</div>
+            </div>
+        </div>
+        <a routerLink="/account" class="btn btn-dark mt-3 ml-0 mr-3">{{ 'common.back' | translate }}</a>
+        <button [disabled]="!formdata.valid" type="submit" class="btn btn-primary mt-3 ml-0 mr-3">{{ 'common.save' | translate }}</button>
+    </form>
+</div>

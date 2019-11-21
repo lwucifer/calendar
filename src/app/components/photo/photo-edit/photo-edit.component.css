@@ -1,0 +1,23 @@
+.photo-add .select-type{
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 3px 10px;
+    height: 100px;
+    overflow-y: scroll;
+}
+
+.photo-add .select-type-row{
+    display: block;
+}
+
+.photo-add .select-type-row .item-type{
+    /*float: left;*/
+    /*width: 90%;*/
+}
+.photo-add .select-type-row .item-type-delete{
+    /*width: 10%;*/
+    /*margin-right: 2rem;*/
+    float: right;
+    text-align: center;
+    cursor: pointer;
+}

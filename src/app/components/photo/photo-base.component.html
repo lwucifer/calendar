@@ -1,0 +1,114 @@
+<div class="photo-add" *ngIf="loaded == true">
+    <h3 class="page-title">{{ (id ?  'photo.edit.title' : 'photo.add.title') | translate }}</h3>
+
+    <form class="search-form" [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)" (keydown.enter)="$event.preventDefault()">
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'photo.common.form.name_photo' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" formControlName="name"/>
+                <div class="alert alert-danger" *ngIf="message?.name">{{message?.name}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'photo.common.form.cash_departs' | translate }}</label>
+            </div>
+            <div class="col-sm-4">
+                <select formControlName="cash_id" class="form-control">
+                    <option [value]="idCash.id" *ngFor="let idCash of cash">{{ idCash.name }}</option>
+                </select>
+                <div class="alert alert-danger" *ngIf="message?.cash_id">{{message?.cash_id}}</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label class="">{{ 'photo.common.form.option' | translate }}</label>
+            </div>
+            <div class="col-sm-8">
+                <div formArrayName="option">
+                    <div *ngFor="let option of formdata.controls.option.controls;let indexOption = index">
+                        <div [formGroupName]="indexOption">
+                            <div class="form-group row">
+                                <div class="col-sm-2">
+                                    <label>{{ 'photo.common.form.option_name' | translate }}</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" formControlName="name"/>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-dark w-100" (click)="removeOption(indexOption)">-</button>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-3 mb-3">
+                                <div class="col-sm-2">
+                                    <label>{{ 'photo.common.form.option_select' | translate }}</label>
+                                </div>
+                                <div class="col-sm-10">
+                                    <div class="form-group row">
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control"
+                                                   [(ngModel)]="inputChoiceOptions[indexOption]"
+                                                   [ngModelOptions]="{standalone: true}"/>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" (click)="this.addSelectOption(indexOption)"
+                                                    class="btn btn-dark min-w-100" [disabled]="!inputChoiceOptions[indexOption]">+
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-danger col-6" *ngIf="sameInputSelectOption[indexOption]">{{ 'photo.common.form.errorSameInput' | translate }}</div>
+                                    <div class="select-type" dragula="CLICKS" [(dragulaModel)]="arraySelectOptions[indexOption]"  >
+                                        <div class="select-type-row"
+                                             *ngFor="let options of arraySelectOptions[indexOption]; let indexSelectOption = index" [attr.data-id]="indexOption">
+                                            <span class="item-type" *ngIf="!editMode[indexOption][indexSelectOption]" (dblclick)="clearEditMode();editMode[indexOption][indexSelectOption]=true">{{ options.name }}</span>
+                                            <span class="item-type-delete" *ngIf="!editMode[indexOption][indexSelectOption]" (click)="deleteSelectOption(indexOption,indexSelectOption)">x</span>
+                                            <span class="item-type" *ngIf="editMode[indexOption][indexSelectOption]">
+                                                <input type="text" [(ngModel)]="options.name" [ngModelOptions]="{standalone: true}" (keyup.enter)="updateOption($event)"/>
+                                                <a class="item-type-delete"  (click)="clearEditMode()">{{ 'common.save' | translate }}</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-2">
+                                    <label>{{ 'photo.common.form.option_choice' | translate }}</label>
+                                </div>
+                                <div class="col-sm-10 form-group align-center">
+                                    <input type="radio" formControlName="type" value="0"/><span class="mr-5">{{ 'photo.common.form.option_choice_radio' | translate }}</span>
+                                    <input type="radio" formControlName="type" value="1"/><span>{{ 'photo.common.form.option_choice_checkbox' | translate }}</span>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-3 mb-3">
+                                <div class="col-sm-2">
+                                    <label>{{ 'photo.common.form.is_enabled' | translate }}</label>
+                                </div>
+                                <div class="col-sm-10 form-group">
+                                    <label class="switch align-middle mb-0" style="height: 24px">
+                                        <input type="checkbox" formControlName="require">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" (click)="this.addOption()" class="btn btn-dark min-w-100 float-left">+</button>
+                <input type="number" class="form-control float-left" style="width: 100px;margin-left: 20px;" [(ngModel)]="numberAddOption" [ngModelOptions]="{standalone: true}" />
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-sm-2">
+                <label class="">{{ 'photo.common.form.comment' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" formControlName="comment"></textarea>
+            </div>
+        </div>
+        <a routerLink="/photo" class="btn btn-dark mt-3 ml-0 mr-3">{{ 'common.back' | translate }}</a>
+        <button [disabled]="!formdata.valid" type="submit" class="btn btn-primary mt-3 ml-0 mr-3">{{ 'common.save' | translate }}</button>
+    </form>
+</div>

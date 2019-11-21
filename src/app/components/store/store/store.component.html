@@ -1,0 +1,106 @@
+<div class="account-list">
+    <h3 class="page-title">{{ 'store.list.title' | translate }}</h3>
+    <form class="search-form" method="get" (ngSubmit)="search(fm)" #fm="ngForm">
+        <div class="row m-0">
+            <div class="col-sm-3 p-0 mr-2">
+                <label class="w-100">{{ 'store.list.store_name' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="name" value=""/>
+            </div>
+            <div class="col-sm-3 p-0 mr-2">
+                <label class="w-100">{{ 'store.common.form.code' | translate }}</label>
+                <input class="form-control" type="text" ngModel name="code" value=""/>
+            </div>
+            <div class="col-sm-4 p-0">
+                <button type="submit" class="btn btn-primary ml-0 btn-search">{{ 'common.search' | translate }}</button>
+            </div>
+        </div>
+    </form>
+    <div class="m-0 mt-4 mb-3">
+        <a role="button" href="/api/store/export/all" target="_blank" class="btn btn-dark mr-2">{{ 'common.csv_export' |
+            translate }}</a>
+        <a href="javascript:void(0)" class="btn btn-info" data-toggle="modal" data-target="#importModal">{{
+            'common.csv_import' | translate }}</a>
+        <a routerLink="/store/add" class="btn btn-primary ml-0 float-right">{{ 'common.new' | translate }}</a>
+    </div>
+    <div class="row m-0">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'store.list.id' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'store.list.store_name' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <!--<th [class.active]="order === 'id'" (click)="setOrder('id')">-->
+                    <!--{{ 'store.list.manager' | translate }}-->
+                    <!--<span [hidden]="reverse">▼</span>-->
+                    <!--<span [hidden]="!reverse">▲</span>-->
+                <!--</th>-->
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'store.list.phone' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'common.enable' | translate }}</th>
+                <th>{{ 'common.edit' | translate }}</th>
+                <th>{{ 'store.list.calendar' | translate }}</th>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'store.list.last_update' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'store.list.last_update_by' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'common.delete' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let i of results | orderBy: order:reverse:'case-insensitive'; index as e">
+                <td>{{ i.id }}</td>
+                <td>{{ i.name }}</td>
+                <!--<td>{{ i.manager[0].first_name + ' ' + i.manager[0].last_name}}</td>-->
+                <td>{{ i.phone }}</td>
+                <td>
+                    <a href="javascript:void(0);">
+                        <label class="switch align-middle mb-0">
+                            <input type="checkbox" [checked]="i.is_enable" (change)="enable(i.id, i.is_enable)"/>
+                            <span class="slider round"></span>
+                        </label>
+                    </a>
+                </td>
+                <td>
+                    <a routerLink="/store/edit/{{ i.id }}" class="mr-2">{{ 'common.edit' | translate }}</a>
+                </td>
+                <td>
+                    <a *ngIf="i.is_enable" routerLink="/store/calendar/{{ i.id }}" class="mr-2">{{ 'store.list.calendar' | translate }}</a>
+                </td>
+                <td>{{ i.updated_at?.date | date : dateformat}}</td>
+                <td>{{ i.last_update_by[0]?.first_name + ' '+ i.last_update_by[0]?.last_name}}</td>
+                <td>
+                    <button [disabled]="i.is_enable" (click)="delete(i.id)" class="btn btn-danger">{{ 'common.delete' | translate }}</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <app-pagination
+                (goPage)="goToPage($event)"
+                (goNext)="onNext()"
+                (goPrev)="onPrev()"
+                [pagesToShow]="5"
+                [page]="page"
+                [perPage]="pages?.per_page"
+                [count]="pages?.total">
+        </app-pagination>
+        <app-import [attrImport]="attrImport" [object]="object" class="w-100"></app-import>
+
+    </div>
+</div>

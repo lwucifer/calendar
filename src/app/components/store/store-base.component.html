@@ -1,0 +1,261 @@
+<div class="account-list" *ngIf="loaded == true">
+    <h3 class="page-title">{{ (id ? 'store.edit.title' : 'store.add.title') | translate }}</h3>
+    <form [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)">
+        <div class="form-group row required" *ngIf="id">
+            <div class="col-sm-2">
+                <label>{{ 'store.common.form.code' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" readonly type="text" formControlName="code"/>
+                <div class="alert alert-danger" *ngIf="message?.code">{{message?.code}}</div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'store.common.form.name' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" formControlName="name"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.name">{{message?.name}}</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'store.common.form.phone' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" formControlName="phone"/>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.phone">{{message?.phone}}</div>
+            </div>
+        </div>
+        <h5 class="mt-4 mb-3">{{ 'store.common.form.setting' | translate }}</h5>
+        <div class="form-group row required">
+            <div class="col-sm-2">
+                <label>{{ 'store.common.form.setting_weekend_hour' | translate }}</label>
+            </div>
+            <div class="col-sm-10 mb-0">
+                <div class="form-group align-items-center">
+                    <div class="form-group mb-3 align-items-center">
+                        <input class="form-control max-w-100"
+                               type="text" [owlDateTimeTrigger]="weekday_start_time"
+                               [(ngModel)]="wTimeRangeStart"
+                               [owlDateTime]="weekday_start_time" formControlName="weekday_start_time"/>
+                        <owl-date-time [pickerType]="'timer'" #weekday_start_time></owl-date-time>
+
+                        <span class="pl-3 pr-3">-</span>
+                        <input class="form-control max-w-100"
+                               type="text" [owlDateTimeTrigger]="weekday_end_time"
+                               [(ngModel)]="wTimeRangeEnd"
+                               [owlDateTime]="weekday_end_time"
+                               formControlName="weekday_end_time"/>
+                        <owl-date-time [pickerType]="'timer'" #weekday_end_time></owl-date-time>
+                    </div>
+                    <span class="pl-3 pr-3 mb-3">{{ 'store.common.form.holiday' | translate }}</span>
+                    <div class="form-group mb-3 align-items-center">
+                        <input class="form-control max-w-100"
+                               type="text"  [owlDateTimeTrigger]="holiday_start_time"
+                               [owlDateTime]="holiday_start_time"
+                               [(ngModel)]="hTimeRangeStart"
+                               formControlName="holiday_start_time"/>
+                        <owl-date-time [pickerType]="'timer'" #holiday_start_time></owl-date-time>
+                        <span class="pl-3 pr-3">-</span>
+                        <input class="form-control max-w-100"
+                               type="text" [owlDateTimeTrigger]="holiday_end_time"
+                               [owlDateTime]="holiday_end_time"
+                               [(ngModel)]="hTimeRangeEnd"
+                               formControlName="holiday_end_time"/>
+                        <owl-date-time [pickerType]="'timer'" #holiday_end_time></owl-date-time>
+                    </div>
+                </div>
+                <div>
+                    <div class="alert alert-danger"
+                         *ngIf="message?.weekday_start_time ||
+                         message?.weekday_end_time ||
+                         message?.holiday_start_time ||
+                         message?.holiday_start_time || formdata?.errors">
+                        {{message?.weekday_start_time}} {{message?.weekday_end_time}} {{message?.holiday_start_time}} {{message?.holiday_end_time}}
+                    <ng-container *ngIf="formdata?.errors?.invalidTimeWeekend" > {{ 'store.common.validator.invalidTimeWeekend' | translate }} </ng-container>
+                    <ng-container *ngIf="formdata?.errors?.invalidTimeHoliday" > {{ 'store.common.validator.invalidTimeHoliday' | translate }} </ng-container>
+                    <ng-container *ngIf="formdata?.errors?.invalidTimeCommon" > {{ 'store.common.validator.invalidTimeCommon' | translate }} </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>{{ 'store.common.form.setting_holiday' | translate }}</label>
+            </div>
+            <div class="col-sm-10 form-group">
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.mon' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_monday"/>
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.tue' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_tuesday"/>
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.wed' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_wednesday"/>
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.thu' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_thursday"/>
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.fri' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_friday"/>
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.sta' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_saturday"/>
+                <label class="pl-3 pr-3 h-auto pt-0 mb-0 align-center">{{ 'store.common.form.sun' | translate }}</label>
+                <input class="form-control max-w-100" type="checkbox" formControlName="day_off_sunday"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label class="">{{ 'store.common.form.setting_holiday_specification' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" formControlName="fixed_days_off"/>
+                <p>{{ 'store.common.form.notice_holiday' | translate }}</p>
+            </div>
+        </div>
+        <div class="form-group row text-red">
+            <div class="col-sm-2">
+                <label class="">{{ 'store.common.form.setting_holiday_specification_person' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" formControlName="fixed_days_on"/>
+                <p>{{ 'store.common.form.notice_holiday_person' | translate }}</p>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label class="">{{ 'store.common.form.lane_register' | translate }}</label>
+            </div>
+            <div class="col-sm-10 list-lane" >
+                <div formArrayName="lanes" class="mb-5"
+                     *ngFor="let item of formdata.get('lanes').controls; let i = index;">
+                    <div [formGroupName]="i">
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                                <label>{{ 'store.common.form.lane_name' | translate }}</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" formControlName="name"/>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-dark w-50" (click)="removeItem(i)">-</button>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-3 mb-3">
+                            <div class="col-sm-2">
+                                <label>{{ 'store.common.form.display_order' | translate }}</label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input class="form-control max-w-100" type="number" formControlName="order"/>
+                            </div>
+                        </div>
+                        <div class="form-group d-flex mb-5">
+                            <input type="hidden" value="{{i}}" class="lane_id">
+                            <div class="text-center">
+                                <label class="subtop">{{ 'store.common.form.photo_list' | translate }}</label>
+                                <select multiple="multiple" class="min-h-200 min-w-200 s1">
+                                    <option *ngFor="let j of origin_photo[i]" value="{{ j.id }}">{{ j.name }}</option>
+                                </select>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn pl-1 pr-1 m-3 move-items" (click)="moveItems($event, '.s1')">=></button><br>
+                                <button type="button" class="btn pl-1 pr-1 m-3 move-items" (click)="moveItems($event, '.s2')"><=</button>
+                            </div>
+                            <div class="text-center">
+                                <label class="subtop">{{ 'store.common.form.photo_list_select' | translate }}</label>
+                                <select multiple="multiple" class="min-h-200 min-w-200 s2">
+                                    <option *ngFor="let j of destination_photo[i]" value="{{ j.id }}">{{ j.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0  align-items-center">
+                            <label class="mr-3 mb-2r w-120">{{ 'store.common.form.acceptable_time' | translate }}</label>
+                            <div class="form-group mb-2r">
+                                <div class="position-relative">
+                                    <label class="abs">{{ 'store.common.form.weekend_day' | translate }}</label>
+                                    <input class="form-control max-w-100"
+                                           type="text"  [owlDateTimeTrigger]="lane_weekday_start_time"
+                                           [(ngModel)]="wlaneTimeRangeStart[i]"
+                                           [owlDateTime]="lane_weekday_start_time"
+                                           formControlName="weekday_start_time"/>
+                                    <owl-date-time [pickerType]="'timer'" #lane_weekday_start_time></owl-date-time>
+                                </div>
+                                <span class="pl-3 pr-3">~</span>
+                                <input class="form-control max-w-100 mr-5"
+                                       type="text" [owlDateTimeTrigger]="lane_weekday_end_time"
+                                       [(ngModel)]="wlaneTimeRangeEnd[i]"
+                                       [owlDateTime]="lane_weekday_end_time"
+                                       formControlName="weekday_end_time"/>
+                                <owl-date-time [pickerType]="'timer'" #lane_weekday_end_time></owl-date-time>
+                            </div>
+                            <div class="form-group mb-2r">
+                                <div  class="position-relative">
+                                    <label class="abs">{{ 'store.common.form.lane_holiday' | translate }}</label>
+                                    <input class="form-control max-w-100"
+                                           type="text" [owlDateTimeTrigger]="lane_holiday_start_time"
+                                           [(ngModel)]="hlaneTimeRangeStart[i]"
+                                           [owlDateTime]="lane_holiday_start_time"
+                                           formControlName="holiday_start_time"/>
+                                    <owl-date-time [pickerType]="'timer'" #lane_holiday_start_time></owl-date-time>
+                                </div>
+                                <span class="pl-3 pr-3">~</span>
+                                <input class="form-control max-w-100"
+                                       type="text" [owlDateTimeTrigger]="lane_holiday_end_time"
+                                       [(ngModel)]="hlaneTimeRangeEnd[i]"
+                                       [owlDateTime]="lane_holiday_end_time"
+                                       formControlName="holiday_end_time"/>
+                                <owl-date-time [pickerType]="'timer'" #lane_holiday_end_time></owl-date-time>
+                            </div>
+                        </div>
+                        <div class="form-group" *ngIf="item?.errors">
+                            <div class="alert alert-danger">
+                                <ng-container *ngIf="item?.errors?.invalidTimeWeekend" > {{ 'store.common.validator.invalidTimeWeekend' | translate }} </ng-container>
+                                <ng-container *ngIf="item?.errors?.invalidTimeHoliday" > {{ 'store.common.validator.invalidTimeHoliday' | translate }} </ng-container>
+                                <ng-container *ngIf="item?.errors?.invalidTimeCommon" > {{ 'store.common.validator.invalidTimeCommon' | translate }} </ng-container>
+                            </div>
+                        </div>
+                        <div class="form-group  align-items-center">
+                            <label class="mr-3 w-120 mb-0">{{ 'store.common.form.visit_time_interval' | translate }}</label>
+                            <input class="form-control max-w-100 mr-2" type="number" formControlName="visit_time"  min="1"/>
+                            <span>{{ 'store.common.form.minutes' | translate }}</span><br>
+                        </div>
+
+                        <div class="form-group align-items-center">
+                            <label class="mr-3 w-120 mb-0">{{ 'store.common.form.reservation_capacity' | translate }}</label>
+                            <input class="form-control max-w-100 mr-2" type="number" formControlName="number"  min="1"/>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger" *ngIf="message?.lane">{{message?.lane}}</div>
+                <div class="alert alert-danger" *ngIf="message?.timer">{{message?.timer}}</div>
+                <br>
+                <button type="button" class="btn btn-dark w-100" (click)="addItem()">+</button>
+
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-sm-2">
+                <label class="">{{ 'store.common.form.email_signature' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" formControlName="sign_email" rows="5"></textarea>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.sign_email">{{message?.sign_email}}</div>
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-sm-2">
+                <label class="">{{ 'store.common.form.comment' | translate }}</label>
+            </div>
+            <div class="col-sm-10">
+                <textarea class="form-control" type="text" formControlName="comment" rows="5"></textarea>
+                <br>
+                <div class="alert alert-danger" *ngIf="message?.comment">{{message?.comment}}</div>
+            </div>
+        </div>
+        <a routerLink="/store" class="btn btn-dark mt-3 ml-0 mr-3">{{ 'common.back' | translate }}</a>
+        <button [disabled]="!formdata.valid" type="submit" class="btn btn-primary mt-3 ml-0 mr-3">{{ 'common.save' | translate }}</button>
+    </form>
+</div>

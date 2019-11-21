@@ -1,0 +1,49 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="importModal">
+    <div class="modal-dialog">
+        <form (ngSubmit)="import(fm)" #fm="ngForm" class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">{{ 'import.modal_title' | translate }}</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="fileinputs">
+                        <input class="file btn" id="csv_file" type="file" accept=".csv" name="csv_file" (change)="handleFileSelect($event)" required ngModel>
+                        <div class="fakefile">
+                            <span class="btn btn-primary">{{ 'import.button_text' | translate }}</span>
+                            <span *ngIf="!fileName">{{ 'import.no_file' | translate }}</span>
+                            <span *ngIf="fileName">{{ fileName }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">{{ 'common.close' | translate }}</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="sv_file">{{ 'import.process_import' | translate }}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div role="alert" class="alert alert-success  alert-dismissible fade show mt-5 alert-danger" *ngIf="message != 'success' && message != ''">
+    {{ message }}
+    <a (click)="message = ''" class="close">×</a>
+</div>
+
+<div role="alert" class="alert alert-success  alert-dismissible fade show mt-5 alert-danger" *ngIf="total === 0 && message == 'success'">
+    {{ 'import.no_data' | translate }}
+    <a (click)="total = null" class="close">×</a>
+</div>
+
+<div role="alert" class="alert alert-success  alert-dismissible fade show mt-5" *ngIf="total > 0">
+    <strong class="d-block">{{ 'import.import' | translate }} {{ success }}/{{ total }} {{ 'import.rows' | translate }}</strong>
+    <a (click)="total = null" class="close">×</a>
+    <span *ngFor="let i of error; index as e" class="alert-danger">
+        {{ 'import.error_title' | translate }} {{ i.index + 2 }}: <br/>
+        <span class="alert-danger" *ngFor="let j of showMessage(e)">{{ j + ' '}}</span>
+        <br/>
+    </span>
+</div>
+

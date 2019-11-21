@@ -1,0 +1,64 @@
+<div>
+    <h3 class="nav-title"></h3>
+    <nav class="navbar navbar-expand-lg navbar-light d-flex flex-column p-0">
+        <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler mr-auto">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarSupportedContent" class="collapse navbar-collapse w-100">
+            <ul class=" navbar-nav d-flex flex-column w-100">
+                <li class="nav-item"><a class="nav-link" routerLink="/">{{ 'menu.home' | translate }}</a></li>
+                <li class="nav-item"><a class="nav-link" routerLink="/admin" *ngIf="(isAdmin())">{{ 'menu.admin' | translate }}</a></li>
+                <li class="nav-item"><a class="nav-link" routerLink="/email-template" *ngIf="(isAdmin())">{{ 'menu.email_template' | translate }}</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"
+                       href="#" data-toggle="collapse" data-target="#navbar4"
+                       aria-controls="navbar4" aria-expanded="false" aria-label="Toggle navigation">
+                        {{ 'menu.account' | translate }}</a>
+                    <div class="collapse" id="navbar4">
+                        <a class="dropdown-item" *ngIf="(isManager() || isAdmin())" [routerLink]="['/account']">{{ 'menu.account_list' | translate }}</a>
+                        <a class="dropdown-item" *ngIf="(isManager() || isAdmin())" routerLink="/account/add">{{ 'menu.account_add' | translate }}</a>
+                        <a class="dropdown-item" *ngIf="(isAdmin())" routerLink="/unlock">{{ 'menu.unlock' | translate }}</a>
+                        <a class="dropdown-item" routerLink="/change-password" >{{ 'menu.change_password' | translate }}</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" *ngIf="(isManager() || isAdmin())">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="collapse" data-target="#navbar3"
+                       aria-controls="navbar3" aria-expanded="false" aria-label="Toggle navigation">
+                        {{ 'menu.campaign' | translate }}</a>
+                    <div class="collapse" id="navbar3">
+                        <a class="dropdown-item" routerLink="/campaign">{{ 'menu.campaign_list' | translate }}</a>
+                        <a class="dropdown-item" routerLink="/campaign/add">{{ 'menu.campaign_add' | translate }}</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" *ngIf="(isManager() || isAdmin() || isUser())">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="collapse" data-target="#navbar2"
+                       aria-controls="navbar2" aria-expanded="false" aria-label="Toggle navigation">
+                        {{ 'menu.plan' | translate }}</a>
+                    <div class="collapse" id="navbar2">
+                        <a class="dropdown-item" routerLink="/plan">{{ 'menu.plan_list' | translate }}</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" *ngIf="(isManager() || isAdmin())">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="collapse" data-target="#navbar1"
+                       aria-controls="navbar1" aria-expanded="false" aria-label="Toggle navigation">
+                        {{ 'menu.photo' | translate }}</a>
+                    <div class="collapse" id="navbar1">
+                        <a class="dropdown-item" routerLink="/photo">{{ 'menu.photo_list' | translate }}</a>
+                        <a class="dropdown-item" routerLink="/photo/add">{{ 'menu.photo_add' | translate }}</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" *ngIf="(isAdmin())">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="collapse" data-target="#navbar0"
+                       aria-controls="navbar0" aria-expanded="false" aria-label="Toggle navigation">
+                        {{ 'menu.store' | translate }}</a>
+                    <div class="collapse" id="navbar0">
+                        <a class="dropdown-item" routerLink="/store">{{ 'menu.store_list' | translate }}</a>
+                        <a class="dropdown-item" routerLink="/store/add">{{ 'menu.store_add' | translate }}</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

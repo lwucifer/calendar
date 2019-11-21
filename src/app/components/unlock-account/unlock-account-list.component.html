@@ -1,0 +1,63 @@
+<div class="account-list">
+    <h3 class="page-title">{{ 'menu.unlock' | translate }}</h3>
+
+    <div class="row m-0">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'unlock.list.id' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'role.name'" (click)="setOrder('role.name')">
+                    {{ 'account.account_list.list.role' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'store.name'" (click)="setOrder('store.name')">
+                    {{ 'account.account_list.list.store' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'email'" (click)="setOrder('email')">
+                    {{ 'unlock.list.mail' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'updated_at.date'" (click)="setOrder('updated_at.date')">
+                    {{ 'unlock.list.locked_at' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <td>{{ 'unlock.list.action' | translate }}</td>
+            </tr>
+            </thead>
+            <tbody *ngIf="results">
+            <tr *ngFor="let i of (results | orderBy: order:reverse:'case-insensitive'); index as e">
+                <td>{{ i.user[0].id }}</td>
+                <td>{{ i.user[0].role.name }}</td>
+                <td>{{ i.user[0].store ? i.user[0].store.name : '' }}</td>
+                <td>{{ i.user[0].email }}</td>
+                <td>{{ i.user[0].updated_at?.date | date : dateformat}}</td>
+                <td>
+                    <button class="btn btn-info" [disabled]="runAction" (click)="unlockAccount(i.id)" >{{ 'unlock.button.unlock' | translate }}</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <app-pagination
+                (goPage)="goToPage($event)"
+                (goNext)="onNext()"
+                (goPrev)="onPrev()"
+                [pagesToShow]="5"
+                [page]="page"
+                [perPage]="pages.per_page"
+                [count]="pages.total">
+        </app-pagination>
+        <app-import [attrImport]="attrImport" class="w-100"></app-import>
+
+    </div>
+</div>
+

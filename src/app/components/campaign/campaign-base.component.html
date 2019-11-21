@@ -1,0 +1,318 @@
+<div class="account-list" *ngIf="loaded == true">
+    <h3 class="page-title">{{ (id ?  'campaign.edit.title' : 'campaign.add.title') | translate }}</h3>
+    <form [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)">
+            <div class="form-group row required" *ngIf="id">
+                <div class="col-sm-2">
+                    <label>{{ 'campaign.common.form.code' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" readonly formControlName="code"/>
+                    <div class="alert alert-danger max-w-200" *ngIf="message?.code">{{message?.code}}</div>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <div class="col-sm-2">
+                    <label>{{ 'campaign.common.form.name' | translate }}<br>
+                        {{ 'campaign.common.form.system' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" formControlName="name"/>
+                    <br>
+                    <div class="alert alert-danger" *ngIf="message?.name">{{message?.name}}</div>
+                </div>
+            </div>
+
+            <div class="form-group row required">
+                <div class="col-sm-2">
+                    <label>{{ 'campaign.common.form.name' | translate }}<br>
+                        {{ 'campaign.common.form.web' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" formControlName="web_name"/>
+                    <br>
+                    <div class="alert alert-danger" *ngIf="message?.web_name">{{message?.web_name}}</div>
+                </div>
+            </div>
+
+            <div class="form-group row required">
+                <div class="col-sm-2">
+                    <label class="">{{ 'campaign.common.form.store' | translate }}</label>
+                </div>
+                <div class="col-sm-10 form-group d-flex">
+
+                    <div class="text-center min-w-200">
+                        <label class="subtop">{{ 'campaign.common.form.list_store' | translate }}</label>
+                        <select multiple="multiple" name="" class="min-h-200 sb1 min-w-200 s1">
+                            <option *ngFor="let j of origin_store" value="{{ j.id }}">{{ j.name }}</option>
+                        </select>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="button" class="btn pl-1 pr-1 m-3" (click)="moveItems($event, '.s1', '.s2')">=>
+                        </button>
+                        <br>
+                        <button type="button" class="btn pl-1 pr-1 m-3" (click)="moveItems($event, '.s2', '.s1')"><=
+                        </button>
+                    </div>
+                    <div class="text-center min-w-200">
+                        <label class="subtop">{{ 'campaign.common.form.store' | translate }}</label>
+                        <select multiple="multiple" name="" class="min-h-200 min-w-200 s2">
+                            <option *ngFor="let j of destination_store" value="{{ j.id }}">{{ j.name }}</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-group row required">
+                <div class="col-sm-2">
+                    <label>{{ 'campaign.common.form.time' | translate }}</label>
+                </div>
+                <div class="col-sm-10 form-group">
+                    <select class="form-control max-w-100 mr-2" formControlName="time">
+                        <option *ngFor="let time of timeDefault" [value]="time" >{{ time }}</option>
+                    </select>
+                    <span>分</span><br>
+                </div>
+                <br>
+                <div class="col-sm-2"></div>
+                <div class="col-sm-10">
+                    <div class="alert alert-danger" *ngIf="message?.time">{{message?.time}}</div>
+                </div>
+            </div>
+
+            <div class="form-group row required">
+                <div class="col-sm-2">
+                    <label>{{ 'campaign.common.form.photo_type' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <select class="form-control max-w-200" formControlName="photo_id" id="select_photo"
+                            (change)="reset()">
+                        <option value="{{ i.id }}" *ngFor="let i of list_photo">{{ i.name }}</option>
+                    </select>
+                    <br>
+                    <div class="alert alert-danger" *ngIf="message?.photo_id">{{message?.photo_id}}</div>
+                </div>
+            </div>
+
+            <h5 class="mt-4 mb-3">{{ 'campaign.common.form.calendar_setting' | translate }}</h5>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label class="p-0">{{ 'campaign.common.form.calendar_display' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="{{ 'acceptable'}}" formControlName="is_display_calendar"
+                               class="custom-control-input" [value]="1">
+                        <label class="custom-control-label pt-0" for="{{ 'acceptable'}}">
+                            {{ 'campaign.common.form.yes' | translate }}
+                        </label>
+                    </div>
+
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="{{ 'unacceptable'}}" formControlName="is_display_calendar"
+                               class="custom-control-input" [value]="0" [(ngModel)]="radio_type">
+                        <label class="custom-control-label pt-0" for="{{ 'unacceptable'}}">
+                            {{ 'campaign.common.form.no' | translate }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div formArrayName="option"
+                 *ngFor="let item of formdata.get('option').controls; let i = index;" class="border-left-0">
+                <div [formGroupName]="i" class="border-left-0">
+                    <div class="form-group row mb-0">
+                        <div class="col-sm-2">
+                            <div *ngIf="i === 0;else other">
+                                <label class="">{{ 'campaign.common.form.normal_setting' | translate }}</label>
+                            </div>
+                            <ng-template #other>
+                                <label class="">{{ 'campaign.common.form.special_setting' | translate }}{{i}}</label>
+                            </ng-template>
+                        </div>
+                        <div class="col-sm-10">
+                            <div class="form-group mb-0">
+                                <div class="form-group mr-5 mb-5 align-items-center">
+                                    <input id="start_time_{{ i }}" formControlName="start_time"
+                                           [(ngModel)]="dateTimeRange[i]"
+                                           [selectMode]="'rangeFrom'"
+                                           class="form-control max-w-150 time-start time-value"
+                                           [owlDateTimeTrigger]="start_time" [owlDateTime]="start_time" (ngModelChange)="checkDate()">
+                                    <owl-date-time #start_time></owl-date-time>
+                                    <span class="pl-3 pr-3">〜</span>
+                                    <input id="end_time_{{ i }}" formControlName="end_time"
+                                           class="form-control max-w-150 time-end time-value"
+                                           [(ngModel)]="dateTimeRange[i]"
+                                           [selectMode]="'rangeTo'"
+                                           [owlDateTimeTrigger]="end_time" [owlDateTime]="end_time" (ngModelChange)="checkDate()">
+                                    <owl-date-time #end_time></owl-date-time>
+                                </div>
+                                <div class="position-relative mr-5 mb-5">
+                                    <label class="abs">{{ 'campaign.common.form.weekday_money' | translate }}</label>
+                                    <input class="form-control max-w-150" [min]="0" type="number" formControlName="weekday_fee"/>
+                                </div>
+                                <div class="position-relative mr-5 mb-5">
+                                    <label class="abs">{{ 'campaign.common.form.holiday_money' | translate }}</label>
+                                    <input class="form-control max-w-150" [min]="0" type="number" formControlName="holiday_fee"/>
+                                </div>
+                                <div class="position-relative mr-5 mb-5">
+                                    <label class="abs">{{ 'campaign.common.form.memo' | translate }}</label>
+                                    <input class="form-control max-w-150" type="text" formControlName="memo"/>
+                                </div>
+                                <input class="form-control max-w-150" type="text" style="display: none"
+                                       formControlName="content"/>
+                                <div class="position-relative mr-5 mb-5">
+                                    <label class="abs">{{ 'campaign.common.form.option' | translate }}</label>
+                                    <a href="javascript:void(0)" class="btn btn-primary p-btn"
+                                       (click)="openModal(i)" data-toggle="modal" data-target="#myModal">
+                                        {{ 'campaign.common.form.setting' | translate }}</a>
+                                </div>
+
+                                <div class="position-relative mr-5 mb-5" *ngIf="i != 0">
+                                    <button type="button" class="btn btn-dark max-w-150" (click)="removeOption(i)">-</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="alert alert-danger" id="date_{{ i }}" style="display: none">
+                                    <div class="start"> {{ 'campaign.common.validator.invalidDate' | translate }} </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-10">
+                    <a href="javascript:void(0);" class="btn btn-dark w-100" (click)="addOption(false)">+</a>
+                </div>
+            </div>
+
+            <h5 class="mt-4 mb-3">{{ 'campaign.common.form.mail_setting' | translate }}</h5>
+            <div class="form-group row mt-2r">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-10">
+                    <div formArrayName="mail" *ngFor="let item of formdata.get('mail').controls; let i = index;">
+                        <div [formGroupName]="i">
+                            <div class="form-group row">
+                                <div class="position-relative w-50 col-sm-3">
+                                    <select formControlName="type" class="form-control">
+                                        <option value="1">予約日</option>
+                                        <option value="2">撮影日</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative w-50 col-sm-2">
+                                    <label class="abs">{{ 'campaign.common.form.pre_send' | translate }}</label>
+                                    <input class="form-control w-100" [min]="0" type="number" formControlName="day"/>
+                                </div>
+                                <div class="position-relative w-50 col-sm-1">
+                                    <select formControlName="action" class="form-control">
+                                        <option value="1">前</option>
+                                        <option value="2">後</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative w-50 col-sm-4">
+                                    <label class="abs">{{ 'campaign.common.form.template' | translate }}</label>
+                                    <select class="form-control w-100" formControlName="template">
+                                        <option *ngFor="let mail of list_template_mail" [value]="mail.id" >{{ mail.template }}</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative w-100 col-sm-1">
+                                    <button type="button" class="btn btn-dark" (click)="removeMail(i)">-</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
+                    </div>
+                    <a href="javascript:void(0);" class="btn btn-dark w-100" (click)="addMail()">+</a>
+                </div>
+            </div>
+
+            <div class="form-group row mt-2r">
+                <div class="col-sm-2">
+                    <label class="">{{ 'campaign.common.form.content' | translate }}</label>
+                </div>
+                <div class="col-sm-10">
+                    <textarea class="form-control" type="text" formControlName="comment"></textarea>
+                </div>
+            </div>
+            <a routerLink="/campaign" class="btn btn-dark mt-3 ml-0 mr-3">{{ 'campaign.common.form.back' | translate }}</a>
+            <button *ngIf="show_button == true" id="submit_campaign" [disabled]="!validate()" type="submit" class="btn btn-primary mt-3 ml-0 mr-3">
+                {{ 'campaign.common.form.save' | translate }}
+            </button>
+    </form>
+</div>
+
+<!--Modal-->
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'campaign.common.form.option_setting' | translate }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="account-list f-id-modal">
+                <form (ngSubmit)="onsubmitOption(fm)" #fm="ngForm">
+                    <div class="form-group row">
+                        <div class="col-sm-3">
+                            <label>{{ 'campaign.common.form.weekday_benefits' | translate }}</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input md-input class="form-control" type="text" [ngModel]="current_weekday_benefits[current_option]"
+                                   name="weekday_benefits"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-3">
+                            <label>{{ 'campaign.common.form.holiday_benefits' | translate }}</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input md-input class="form-control" type="text" [ngModel]="current_holiday_benefits[current_option]"
+                                   name="holiday_benefits"/>
+                        </div>
+                    </div>
+                    <div class="option" *ngFor="let item of array_photo_option[current_option]; let i = index">
+                        <div>
+                            <h5 class="page-title">{{ 'campaign.common.form.option' | translate }}{{i + 1
+                                }}【{{item['name']}}】</h5>
+                            <br>
+                            <div class="select" *ngFor="let select of item.select; let j = index">
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label class="">{{select['name']}}</label>
+                                    </div>
+                                    <div class="form-group mb-0 col-sm-9">
+                                        <div class="position-relative w-50 col-sm-5">
+                                            <label class="abs">{{ 'campaign.common.form.weekday' | translate }}</label>
+                                            <input md-input class="form-control w-100" [min]="0" type="number"
+                                                   [ngModel]="select['weekday_price']" name="{{i}}_{{j}}_weekday_price"/>
+                                        </div>
+                                        <div class="position-relative w-50 col-sm-5">
+                                            <label class="abs">{{ 'campaign.common.form.holiday' | translate }}</label>
+                                            <input md-input class="form-control w-100" type="number" [min]="0"
+                                                   [ngModel]="select['holiday_price']" name="{{i}}_{{j}}_holiday_price"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3 ml-0 mr-3">
+                    {{ 'campaign.common.form.decision' | translate }}
+                    </button>
+                    <a href="javascript:void(0);" class="btn btn-dark mt-3 ml-0" (click)="closemodal()">
+                        {{ 'campaign.common.form.cancel' | translate }}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End modal-->

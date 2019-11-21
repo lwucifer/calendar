@@ -1,0 +1,93 @@
+<div class="account-list">
+    <h3 class="page-title">{{ 'photo.list.title' | translate }}</h3>
+    <form class="search-form" (ngSubmit)="search(searchForm)" #searchForm="ngForm">
+        <div class="row m-0">
+            <label class="w-100">{{ 'photo.list.search_by_name' | translate }}</label>
+            <div class="col-sm-4 p-0 mr-2">
+                <input class="form-control" type="text" name="store_name" ngModel/>
+            </div>
+            <div class="col-sm-4 p-0">
+                <button type="submit" class="btn btn-primary ml-0">{{ 'photo.list.search' | translate }}</button>
+            </div>
+        </div>
+    </form>
+    <div class="m-0 mt-4 mb-3">
+        <a role="button" href="/api/photo/export/all" target="_blank" class="btn btn-dark mr-2">{{ 'common.csv_export' | translate }}</a>
+        <a href="javascript:void(0)" class="btn btn-info" data-toggle="modal" data-target="#importModal">{{ 'common.csv_import' | translate }}</a>
+        <a routerLink="/photo/add" class="btn btn-primary ml-0 float-right">{{ 'common.new' | translate }}</a>
+    </div>
+    <div class="row m-0">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th [class.active]="order === 'id'" (click)="setOrder('id')">
+                    {{ 'photo.list.id' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('name')">
+                    {{ 'photo.list.name' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('cash_id[0].name')">
+                    {{ 'photo.list.brand' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('comment')">
+                    {{ 'photo.list.comment' | translate }}<span [hidden]="reverse">▼</span><span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'photo.list.is_enable' | translate }}</th>
+                <th>{{ 'photo.list.edit' | translate }}</th>
+                <th [class.active]="order === 'id'" (click)="setOrder('updated_at?.date')">
+                    {{ 'photo.list.last_update' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th [class.active]="order === 'id'" (click)="setOrder('last_update_by')">
+                    {{ 'photo.list.update_by' | translate }}
+                    <span [hidden]="reverse">▼</span>
+                    <span [hidden]="!reverse">▲</span>
+                </th>
+                <th>{{ 'common.delete' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of (results | orderBy: order:reverse:'case-insensitive'); index as index">
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.cash_id[0].name }}</td>
+                <td>{{ item.comment }}</td>
+                <td>
+                    <a href="javascript:void(0);">
+                        <label class="switch align-middle mb-0">
+                            <input type="checkbox" [checked]="item.is_enable"
+                                   (change)="enable(item.id, item.is_enable)">
+                            <span class="slider round"></span>
+                        </label>
+                    </a>
+                </td>
+                <td><a routerLink="/photo/edit/{{ item.id }}">{{ 'photo.list.edit' | translate }}</a></td>
+                <td>{{ item.updated_at?.date | date : dateformat}}</td>
+                <td>{{ item.last_update_by[0]?.first_name + ' '+ item.last_update_by[0]?.last_name}}</td>
+                <td>
+                    <button [disabled]="item.is_enable" (click)="delete(item.id)" class="btn btn-danger">{{ 'common.delete' | translate }}</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <app-pagination
+                (goPage)="goToPage($event)"
+                (goNext)="onNext()"
+                (goPrev)="onPrev()"
+                [pagesToShow]="5"
+                [page]="page"
+                [perPage]="pages.per_page"
+                [count]="pages.total">
+        </app-pagination>
+        <app-import [attrImport]="attrImport" [object]="object" class="w-100"></app-import>
+
+    </div>
+</div>

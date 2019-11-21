@@ -1,0 +1,91 @@
+<div class="account-list" *ngIf="loaded">
+  <h3 class="page-title">{{ 'admin.title' | translate }}</h3>
+
+  <form class="search-form" [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)" >
+    <div class="form-group row">
+      <div class="col-sm-2">
+        <label class="">{{ 'admin.common.form.consumption_tax' | translate }}</label>
+      </div>
+      <div class="col-sm-10">
+        <div class="form-group mb-1" *ngFor="let i of tax" >
+            <input class="form-control max-w-200" type="text"
+                   required [(ngModel)]="i.start_date_use"
+                   [ngModelOptions]="{standalone: true}"
+                   [owlDateTimeTrigger]="start_date" [owlDateTime]="start_date"
+                   placeholder="開始日"/>
+          <owl-date-time [pickerType]="'calendar'" #start_date></owl-date-time>
+            <span class="pl-3 pr-3">〜</span>
+            <input class="form-control max-w-100" type="text" required [(ngModel)]="i.tax_percent" [ngModelOptions]="{standalone: true}"/>
+            <span class="pl-3 pr-3">%</span>
+        </div>
+        <ng-container *ngIf="addTax" >
+          <div class="form-group mb-1" *ngFor="let i of addTax">
+            <input class="form-control max-w-200"
+                   type="text" required [(ngModel)]="i.start_date_use"
+                   [ngModelOptions]="{standalone: true}"
+                   [owlDateTimeTrigger]="add_start_date" [owlDateTime]="add_start_date"
+                   placeholder="開始日"/>
+            <owl-date-time [pickerType]="'calendar'" #add_start_date></owl-date-time>
+            <span class="pl-3 pr-3">〜</span>
+            <input class="form-control max-w-100" type="text" required [(ngModel)]="i.tax_percent" [ngModelOptions]="{standalone: true}"/>
+            <span class="pl-3 pr-3">%</span>
+          </div>
+        </ng-container>
+        <div class="alert alert-danger col-6" *ngIf="message?.start_date_use || message?.tax_percent">
+          {{message?.start_date_use}} {{message?.tax_percent}}</div>
+        <button type="button" id="add-script" class="btn btn-dark min-w-100 mt-2" (click)="addMoreTax()">+</button>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-2">
+        <h5 class="mb-2">
+          {{ 'admin.common.form.enable_ip' | translate }}
+        </h5>
+      </div>
+      <div class="col-sm-10">
+        <input type="checkbox" class="form-checkbox" formControlName="is_enable">
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-2">
+        <label class="">{{ 'admin.common.form.ip_address' | translate }}</label>
+      </div>
+      <div class="col-sm-3">
+        <input class="form-control origin" type="text"  id="a1" [(ngModel)]="inputIp" [ngModelOptions]="{standalone: true}"/>
+        <div class="alert alert-danger" *ngIf="message?.ip">
+          {{message?.ip}}</div>
+      </div>
+      <div class="text-center">
+        <button type="button" class="btn pl-2 pr-2 add" (click)="moveItems()">=></button>
+      </div>
+      <div class="col-sm-3 text-center">
+        <select multiple="multiple" name="" class="min-h-200 min-w-200" [(ngModel)]="removeIp" [ngModelOptions]="{standalone: true}">
+          <option value="{{ i }}" *ngFor="let i of ip">{{ i }}</option>
+        </select>
+        <button type="button" class="btn" (click)="removeItems()">{{ 'admin.common.form.cancel' | translate }}</button>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-2">
+        <label class="">{{ 'admin.common.form.cash_departs' | translate }}</label>
+      </div>
+      <div class="col-sm-6">
+        <input class="form-control mb-1" type="text" [(ngModel)]="i.name" [ngModelOptions]="{standalone: true}"  placeholder="部門名" *ngFor="let i of cash"/>
+        <input class="form-control mb-1" type="text" [(ngModel)]="i.name" [ngModelOptions]="{standalone: true}" placeholder="部門名" *ngFor="let i of addCash"/>
+        <div class="alert alert-danger" *ngIf="message?.cash">
+          {{message?.cash}}</div>
+        <button type="button" class="btn btn-dark min-w-100 mt-2" (click)="addMoreCash()">+</button>
+      </div>
+    </div>
+    <div class="form-group row mt-4">
+      <div class="col-sm-2">
+        <label>{{ 'admin.common.form.comment' | translate }}</label>
+      </div>
+      <div class="col-sm-10">
+        <textarea class="form-control" type="text" formControlName="memo"></textarea>
+      </div>
+    </div>
+    <button type="submit" [disabled]="!formdata.valid" class="btn btn-primary mt-3 ml-0 mr-3">{{ 'admin.common.form.save' | translate }}</button>
+    <a (click)="resetDataForm()"  class="btn btn-info mt-3 ml-0 mr-3">{{ 'admin.common.form.reset' | translate }}</a>
+  </form>
+</div>
